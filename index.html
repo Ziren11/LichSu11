@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ôn Tập Sử 11 - Cuối Kì II (2025-2026)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
+  header { background: linear-gradient(135deg, #1a365d, #2b6cb0); color: white; padding: 24px 20px; text-align: center; }
+  header h1 { font-size: 1.6rem; margin-bottom: 6px; }
+  header p { font-size: 0.95rem; opacity: 0.85; }
+  .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+  /* Tab navigation */
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tab-btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; background: #e2e8f0; color: #4a5568; transition: all 0.2s; }
+  .tab-btn.active { background: #2b6cb0; color: white; }
+  .tab-btn:hover:not(.active) { background: #cbd5e0; }
+
+  /* Mode selector */
+  .mode-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .mode-btn { padding: 8px 16px; border: 2px solid #2b6cb0; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: white; color: #2b6cb0; transition: all 0.2s; }
+  .mode-btn.active { background: #2b6cb0; color: white; }
+
+  /* Quiz card */
+  .quiz-section { display: none; }
+  .quiz-section.active { display: block; }
+  .question-card { background: white; border-radius: 12px; padding: 22px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #2b6cb0; }
+  .question-card.true-false { border-left-color: #805ad5; }
+  .question-num { font-size: 0.8rem; font-weight: 700; color: #2b6cb0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .question-text { font-size: 1rem; line-height: 1.6; margin-bottom: 14px; font-weight: 500; }
+  .source-text { background: #f7fafc; border-left: 3px solid #a0aec0; padding: 10px 14px; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.6; color: #4a5568; border-radius: 0 6px 6px 0; font-style: italic; }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 8px; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; line-height: 1.5; }
+  .option:hover { border-color: #90cdf4; background: #ebf8ff; }
+  .option.selected { border-color: #2b6cb0; background: #ebf8ff; }
+  .option.correct { border-color: #38a169; background: #f0fff4; }
+  .option.wrong { border-color: #e53e3e; background: #fff5f5; }
+  .option-label { font-weight: 700; color: #2b6cb0; min-width: 20px; }
+
+  /* True/False */
+  .tf-items { display: flex; flex-direction: column; gap: 10px; }
+  .tf-item { background: #f7fafc; border-radius: 8px; padding: 12px 14px; }
+  .tf-item-text { font-size: 0.93rem; line-height: 1.5; margin-bottom: 8px; }
+  .tf-btns { display: flex; gap: 8px; }
+  .tf-btn { padding: 5px 16px; border: 2px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: white; transition: all 0.2s; }
+  .tf-btn:hover { border-color: #90cdf4; }
+  .tf-btn.selected-true { border-color: #38a169; background: #f0fff4; color: #276749; }
+  .tf-btn.selected-false { border-color: #e53e3e; background: #fff5f5; color: #9b2c2c; }
+  .tf-btn.correct-true { border-color: #38a169; background: #38a169; color: white; }
+  .tf-btn.correct-false { border-color: #38a169; background: #38a169; color: white; }
+  .tf-btn.wrong-choice { border-color: #e53e3e; background: #e53e3e; color: white; }
+
+  /* Feedback */
+  .feedback { margin-top: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.88rem; font-weight: 600; display: none; }
+  .feedback.show { display: block; }
+  .feedback.correct { background: #f0fff4; color: #276749; }
+  .feedback.wrong { background: #fff5f5; color: #9b2c2c; }
+
+  /* Controls */
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; align-items: center; }
+  .btn { padding: 10px 22px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: #2b6cb0; color: white; }
+  .btn-primary:hover { background: #2c5282; }
+  .btn-success { background: #38a169; color: white; }
+  .btn-success:hover { background: #276749; }
+  .btn-warning { background: #d69e2e; color: white; }
+  .btn-warning:hover { background: #b7791f; }
+  .btn-danger { background: #e53e3e; color: white; }
+  .btn-danger:hover { background: #c53030; }
+
+  /* Score */
+  .score-box { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; display: none; }
+  .score-box.show { display: block; }
+  .score-num { font-size: 2.5rem; font-weight: 800; color: #2b6cb0; }
+  .score-label { color: #718096; font-size: 0.95rem; margin-top: 4px; }
+
+  /* Progress */
+  .progress-bar { background: #e2e8f0; border-radius: 10px; height: 8px; margin-bottom: 16px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #2b6cb0, #63b3ed); border-radius: 10px; transition: width 0.3s; }
+
+  /* Shuffle info */
+  .info-bar { font-size: 0.85rem; color: #718096; margin-left: auto; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.2rem; }
+    .question-card { padding: 16px; }
+    .tabs { gap: 6px; }
+    .tab-btn { padding: 8px 12px; font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 Ôn Tập Lịch Sử 11 – Cuối Kì II</h1>
+  <p>Năm học 2025 – 2026 | Trắc nghiệm tương tác</p>
+</header>
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('b11')">Bài 11: Cải cách Minh Mạng</button>
+    <button class="tab-btn" onclick="switchTab('b12')">Bài 12: Vị trí Biển Đông</button>
+    <button class="tab-btn" onclick="switchTab('b13')">Bài 13: Việt Nam & Biển Đông</button>
+    <button class="tab-btn" onclick="switchTab('all')">🎯 Tổng hợp</button>
+  </div>
+
+  <div class="mode-bar">
+    <span style="font-weight:600;color:#4a5568">Chế độ:</span>
+    <button class="mode-btn active" onclick="setMode('practice')" id="mode-practice">Luyện tập</button>
+    <button class="mode-btn" onclick="setMode('exam')" id="mode-exam">Thi thử</button>
+    <span class="info-bar" id="info-bar"></span>
+  </div>
+
+  <div class="score-box" id="score-box">
+    <div class="score-num" id="score-num">0/0</div>
+    <div class="score-label" id="score-label">Điểm của bạn</div>
+    <div style="margin-top:12px">
+      <button class="btn btn-warning" onclick="retryQuiz()">🔄 Làm lại</button>
+    </div>
+  </div>
+
+  <div class="progress-bar" id="progress-bar" style="display:none">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-success" onclick="checkAll()">✅ Kiểm tra tất cả</button>
+    <button class="btn btn-warning" onclick="shuffleQuestions()">🔀 Xáo trộn câu hỏi</button>
+    <button class="btn btn-danger" onclick="resetAll()">🗑️ Làm lại</button>
+  </div>
+
+  <!-- BÀI 11 -->
+  <div class="quiz-section active" id="section-b11">
+    <h2 style="margin-bottom:16px;color:#2b6cb0">Bài 11: Cuộc Cải Cách của Minh Mạng</h2>
+    <h3 style="margin-bottom:12px;color:#4a5568;font-size:0.95rem">PHẦN I – Trắc nghiệm nhiều phương án</h3>
+    <div id="mc-b11"></div>
+    <h3 style="margin:20px 0 12px;color:#805ad5;font-size:0.95rem">PHẦN II – Trắc nghiệm Đúng/Sai</h3>
+    <div id="tf-b11"></div>
+  </div>
+
+  <!-- BÀI 12 -->
+  <div class="quiz-section" id="section-b12">
+    <h2 style="margin-bottom:16px;color:#2b6cb0">Bài 12: Vị Trí và Tầm Quan Trọng của Biển Đông</h2>
+    <h3 style="margin-bottom:12px;color:#4a5568;font-size:0.95rem">PHẦN I – Trắc nghiệm nhiều phương án</h3>
+    <div id="mc-b12"></div>
+    <h3 style="margin:20px 0 12px;color:#805ad5;font-size:0.95rem">PHẦN II – Trắc nghiệm Đúng/Sai</h3>
+    <div id="tf-b12"></div>
+  </div>
+
+  <!-- BÀI 13 -->
+  <div class="quiz-section" id="section-b13">
+    <h2 style="margin-bottom:16px;color:#2b6cb0">Bài 13: Việt Nam và Biển Đông</h2>
+    <h3 style="margin-bottom:12px;color:#4a5568;font-size:0.95rem">PHẦN I – Trắc nghiệm nhiều phương án</h3>
+    <div id="mc-b13"></div>
+    <h3 style="margin:20px 0 12px;color:#805ad5;font-size:0.95rem">PHẦN II – Trắc nghiệm Đúng/Sai</h3>
+    <div id="tf-b13"></div>
+  </div>
+
+  <!-- TỔNG HỢP -->
+  <div class="quiz-section" id="section-all">
+    <h2 style="margin-bottom:16px;color:#2b6cb0">🎯 Tổng hợp – Tất cả bài</h2>
+    <div id="mc-all"></div>
+    <div id="tf-all"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
